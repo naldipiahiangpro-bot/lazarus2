@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAZARUS2 - WhatsApp Bug Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #00ff00;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(0, 10, 30, 0.95);
+            border: 3px solid #00ff00;
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 50px #00ff00;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        .logo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #00ff00;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #00ff00;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            color: #00ff00;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00cc00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .error {
+            color: #ff0000;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+
+        /* Main Screen */
+        #mainScreen {
+            display: none;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 20, 40, 0.95);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff00;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-left img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #00ff00;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #userInfo {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #ff0000;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Menu */
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background: rgba(0, 40, 80, 0.9);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .menu-item img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item h3 {
+            color: #00ff00;
+            margin-bottom: 5px;
+        }
+
+        /* Content Pages */
+        .page {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Download Page */
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .download-option {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Bug Page */
+        .bug-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .bug-option {
+            background: rgba(40, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .bug-input {
+            margin: 20px 0;
+        }
+
+        .bug-input input {
+            margin-bottom: 10px;
+        }
+
+        /* Info Page */
+        .info-card {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        /* Status Page */
+        .status-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .status-card {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        /* Add Account Page */
+        .add-form {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .add-form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            color: #00ff00;
+        }
+
+        /* Result Box */
+        .result {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .result.success {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .result.error {
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <div class="logo">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDhO6jenPd9XVAFbt7wRM4ZBYovgyvdBlQDg&usqp=CAU" alt="LAZARUS2">
+            </div>
+            <h1>LAZARUS2</h1>
+            <p style="color: #00ff00;">WhatsApp Bug Tool v1.0</p>
+            
+            <div style="margin: 20px 0;">
+                <input type="text" id="username" placeholder="Username" autocomplete="off">
+                <input type="password" id="password" placeholder="Password" autocomplete="off">
+                <button onclick="login()">LOGIN 🔥</button>
+                <div class="error" id="loginError"></div>
+            </div>
+            
+            <p style="color: #888; font-size: 0.9rem;">
+                Contact: @ADMpanel77<br>
+                Version: 1.1.1.6
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="mainScreen">
+        <!-- Header -->
+        <header>
+            <div class="header-left">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDhO6jenPd9XVAFbt7wRM4ZBYovgyvdBlQDg&usqp=CAU" alt="Logo">
+                <div>
+                    <h2 style="margin: 0; color: #00ff00;">LAZARUS2</h2>
+                    <p style="margin: 0; color: #00ff00; font-size: 0.8rem;">WhatsApp Bug Tool</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <span id="userInfo">User: Loading...</span>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </header>
+
+        <!-- Main Menu -->
+        <div class="menu">
+            <div class="menu-item" onclick="showPage('dashboard')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyYLlOu9IdY5o4B7zEM5gZ5AftTuGmSWAw7rmDFEjRgA&s=10" alt="Dashboard">
+                <h3>🏠 Dashboard</h3>
+            </div>
+            <div class="menu-item" onclick="showPage('download')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRxeuHFSD3UaBCdD0czXF7jUJ7QPmhZW-_X0Ve2xySlQ&s=10" alt="Download">
+                <h3>⬇️ Download</h3>
+            </div>
+            <div class="menu-item" onclick="showPage('bug')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6SrVzNQqeJEJPOnvhuRp-E1fLob1XBQ0q9wOVm8Wckw&s=10" alt="Bug">
+                <h3>🐛 Bug</h3>
+            </div>
+            <div class="menu-item" onclick="showPage('info')">
+                <img src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyeGY2bDkzMDVpeDMyczhlZGU4YWllbmxpMmx1eWV2MDZ2cWxmMGcxNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/z3xQpxigPrXfjKu89B/200w.gif" alt="Info">
+                <h3>📊 Info</h3>
+            </div>
+            <div class="menu-item" onclick="showPage('status')">
+                <img src="https://assets3.thrillist.com/v1/image/2847634/381x254/crop;webp=auto;jpeg_quality=60.jpg" alt="Status">
+                <h3>📡 Status</h3>
+            </div>
+            <div class="menu-item" onclick="showPage('addAccount')">
+                <h3>👑 Add Akun</h3>
+                <p>Owner only</p>
+            </div>
+        </div>
+
+        <!-- Pages -->
+        <div id="pages">
+            <!-- Dashboard -->
+            <div id="dashboard" class="page active">
+                <h2>🔥 DASHBOARD</h2>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyYLlOu9IdY5o4B7zEM5gZ5AftTuGmSWAw7rmDFEjRgA&s=10" alt="GIF" style="width: 100%; max-width: 300px; border-radius: 10px; border: 2px solid #00ff00;">
+                </div>
+                <div class="info-card">
+                    <h3>Welcome to LAZARUS2</h3>
+                    <p>WhatsApp Bug Tool 100% Working</p>
+                    <p>Version: 1.1.1.6</p>
+                    <p>Status: <span style="color: #00ff00;">ONLINE</span></p>
+                </div>
+            </div>
+
+            <!-- Download Page -->
+            <div id="download" class="page">
+                <h2>⬇️ DOWNLOAD</h2>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRxeuHFSD3UaBCdD0czXF7jUJ7QPmhZW-_X0Ve2xySlQ&s=10" alt="Download GIF" style="width: 100%; max-width: 300px; border-radius: 10px;">
+                </div>
+                
+                <div class="download-options">
+                    <div class="download-option" onclick="selectDownload('tiktok')">
+                        <h3>📱 TikTok</h3>
+                        <p>Download video TikTok</p>
+                    </div>
+                    <div class="download-option" onclick="selectDownload('youtube')">
+                        <h3>🎥 YouTube</h3>
+                        <p>Download video YouTube</p>
+                    </div>
+                    <div class="download-option" onclick="selectDownload('instagram')">
+                        <h3>📸 Instagram</h3>
+                        <p>Download video IG</p>
+                    </div>
+                    <div class="download-option" onclick="selectDownload('facebook')">
+                        <h3>👤 Facebook</h3>
+                        <p>Download video Facebook</p>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <input type="text" id="downloadUrl" placeholder="Masukkan URL video..." style="margin-bottom: 10px;">
+                    <button onclick="processDownload()">DOWNLOAD NOW ⚡</button>
+                </div>
+                
+                <div id="downloadResult"></div>
+            </div>
+
+            <!-- Bug Page -->
+            <div id="bug" class="page">
+                <h2>🐛 WHATSAPP BUG</h2>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6SrVzNQqeJEJPOnvhuRp-E1fLob1XBQ0q9wOVm8Wckw&s=10" alt="Bug GIF" style="width: 100%; max-width: 300px; border-radius: 10px;">
+                </div>
+                
+                <div class="bug-options">
+                    <div class="bug-option" onclick="selectBug('frosclose')">
+                        <h4>❄️ Frosclose</h4>
+                    </div>
+                    <div class="bug-option" onclick="selectBug('blankscreen')">
+                        <h4>⬜ Blank Screen</h4>
+                    </div>
+                    <div class="bug-option" onclick="selectBug('combobug')">
+                        <h4>🌀 Combobug</h4>
+                    </div>
+                    <div class="bug-option" onclick="selectBug('iosattack')">
+                        <h4>🍎 iOS Attack</h4>
+                    </div>
+                    <div class="bug-option" onclick="selectBug('group')">
+                        <h4>👥 Bug Grup</h4>
+                    </div>
+                    <div class="bug-option" onclick="selectBug('ch')">
+                        <h4>💬 Bug CH</h4>
+                    </div>
+                </div>
+                
+                <div class="bug-input">
+                    <input type="text" id="targetNumber" placeholder="Nomor target (628xxx)">
+                    <input type="text" id="senderNumber" placeholder="Nomor sender (628xxx)">
+                    <button onclick="executeBug()" style="margin-top: 10px;">EXECUTE BUG 🔥</button>
+                </div>
+                
+                <div id="bugResult"></div>
+            </div>
+
+            <!-- Info Page -->
+            <div id="info" class="page">
+                <h2>📊 MY INFO</h2>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyeGY2bDkzMDVpeDMyczhlZGU4YWllbmxpMmx1eWV2MDZ2cWxmMGcxNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/z3xQpxigPrXfjKu89B/200w.gif" alt="Info GIF" style="width: 100%; max-width: 300px; border-radius: 10px;">
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-item">
+                        <span>Name:</span>
+                        <span id="infoName">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span>Active:</span>
+                        <span id="infoActive">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span>Role:</span>
+                        <span id="infoRole">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span>Expiry:</span>
+                        <span id="infoExpiry">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Page -->
+            <div id="status" class="page">
+                <h2>📡 STATUS</h2>
+                
+                <div class="status-cards">
+                    <div class="status-card">
+                        <h3>👑 INFO OWNER</h3>
+                        <p><strong>Name:</strong> NALzz</p>
+                        <p><strong>Nomor:</strong> +6281341460047</p>
+                        <p><strong>Telegram:</strong> 7198791465</p>
+                        <p><strong>Username:</strong> @ADMpanel77</p>
+                    </div>
+                    
+                    <div class="status-card">
+                        <h3>🤝 INFO PARTNER</h3>
+                        <p><strong>Name:</strong> Emm Not Devv</p>
+                        <p><strong>Nomor:</strong> +6283823084016</p>
+                        <p><strong>Username:</strong> @EMMSTOREZYX</p>
+                    </div>
+                    
+                    <div class="status-card">
+                        <h3>📱 INFO APK</h3>
+                        <p><strong>Name:</strong> LAZARUS2</p>
+                        <p><strong>Version:</strong> 1.1.1.6</p>
+                        <p><strong>Support:</strong> All Device</p>
+                        <p><strong>Status:</strong> <span style="color: #00ff00;">ONLINE</span></p>
+                        <p><strong>Country:</strong> Indonesia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Account Page -->
+            <div id="addAccount" class="page">
+                <h2>👑 ADD AKUN (Owner Only)</h2>
+                
+                <div class="add-form">
+                    <input type="text" id="newUsername" placeholder="Username baru">
+                    <select id="newRole">
+                        <option value="member">Member</option>
+                        <option value="owner">Owner</option>
+                    </select>
+                    <select id="expiryDays">
+                        <option value="1">1 Hari</option>
+                        <option value="7">7 Hari</option>
+                        <option value="30">30 Hari</option>
+                        <option value="90">90 Hari</option>
+                        <option value="365">1 Tahun</option>
+                    </select>
+                    <button onclick="addAccount()" style="margin-top: 15px;">CREATE ACCOUNT 🔥</button>
+                </div>
+                
+                <div id="accountResult"></div>
+                
+                <div class="result" id="currentAccounts">
+                    <h3>Accounts List:</h3>
+                    <div id="accountsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== VARIABLES ====================
+        let currentUser = null;
+        let currentRole = null;
+        let selectedDownload = null;
+        let selectedBug = null;
+        let accounts = [
+            { username: 'NALzz', password: '102712', role: 'owner', active: 'Unlimited', expiry: 'Forever' },
+            { username: 'test', password: 'test123', role: 'member', active: '30 Hari', expiry: '2024-12-31' }
+        ];
+
+        // ==================== PARTICLE EFFECT ====================
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for(let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 5 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                container.appendChild(particle);
+                
+                // Animate
+                animateParticle(particle);
+            }
+        }
+
+        function animateParticle(particle) {
+            let x = Math.random() * 100;
+            let y = Math.random() * 100;
+            let speedX = (Math.random() - 0.5) * 0.3;
+            let speedY = (Math.random() - 0.5) * 0.3;
+            
+            function move() {
+                x += speedX;
+                y += speedY;
+                
+                if(x > 100 || x < 0) speedX *= -1;
+                if(y > 100 || y < 0) speedY *= -1;
+                
+                particle.style.left = x + '%';
+                particle.style.top = y + '%';
+                
+                requestAnimationFrame(move);
+            }
+            move();
+        }
+
+        // ==================== LOGIN SYSTEM ====================
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorEl = document.getElementById('loginError');
+            
+            errorEl.textContent = '';
+            
+            if(!username || !password) {
+                errorEl.textContent = '❌ Username dan Password harus diisi!';
+                return;
+            }
+            
+            // Check credentials
+            const user = accounts.find(acc => 
+                acc.username === username && acc.password === password
+            );
+            
+            if(user) {
+                currentUser = user;
+                currentRole = user.role;
+                
+                // Show main screen
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainScreen').style.display = 'block';
+                
+                // Update user info
+                document.getElementById('userInfo').textContent = `User: ${user.username} (${user.role})`;
+                document.getElementById('infoName').textContent = user.username;
+                document.getElementById('infoActive').textContent = user.active;
+                document.getElementById('infoRole').textContent = user.role;
+                document.getElementById('infoExpiry').textContent = user.expiry;
+                
+                // Initialize particles
+                initParticles();
+                
+            } else {
+                errorEl.textContent = '❌ Login gagal! Username/Password salah';
+            }
+        }
+
+        function logout() {
+            if(confirm('Yakin mau logout?')) {
+                currentUser = null;
+                currentRole = null;
+                document.getElementById('mainScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('loginError').textContent = '';
+            }
+        }
+
+        // ==================== PAGE NAVIGATION ====================
+        function showPage(pageId) {
+            // Hide owner-only pages for non-owners
+            if(pageId === 'addAccount' && currentRole !== 'owner') {
+                alert('❌ Hanya Owner yang bisa akses!');
+                return;
+            }
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Load accounts if needed
+            if(pageId === 'addAccount') {
+                loadAccounts();
+            }
+        }
+
+        // ==================== DOWNLOAD FUNCTIONS ====================
+        function selectDownload(type) {
+            selectedDownload = type;
+            const types = {
+                'tiktok': 'TikTok',
+                'youtube': 'YouTube',
+                'instagram': 'Instagram',
+                'facebook': 'Facebook'
+            };
+            
+            document.getElementById('downloadUrl').placeholder = 
+                `Masukkan URL ${types[type]}...`;
+            
+            // Highlight selected
+            document.querySelectorAll('.download-option').forEach(opt => {
+                opt.style.borderColor = '#00ff00';
+            });
+            event.currentTarget.style.borderColor = '#ffff00';
+        }
+
+        function processDownload() {
+            const url = document.getElementById('downloadUrl').value.trim();
+            const resultEl = document.getElementById('downloadResult');
+            
+            if(!selectedDownload) {
+                resultEl.innerHTML = `<div class="result error">❌ Pilih jenis download dulu!</div>`;
+                return;
+            }
+            
+            if(!url) {
+                resultEl.innerHTML = `<div class="result error">❌ Masukkan URL video!</div>`;
+                return;
+            }
+            
+            // Simulate download
+            const fakeLinks = {
+                'mp4': `https://dl.lazarus2.com/${Date.now()}.mp4`,
+                'mp3': `https://dl.lazarus2.com/${Date.now()}.mp3`
+            };
+            
+            resultEl.innerHTML = `
+                <div class="result success">
+                    <h3>✅ DOWNLOAD BERHASIL!</h3>
+                    <p><strong>Platform:</strong> ${selectedDownload.toUpperCase()}</p>
+                    <p><strong>URL:</strong> ${url.substring(0, 50)}...</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <a href="${fakeLinks.mp4}" style="display: inline-block; background: #00ff00; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin-right: 10px; font-weight: bold;">
+                            ⬇️ DOWNLOAD MP4
+                        </a>
+                        <a href="${fakeLinks.mp3}" style="display: inline-block; background: #0066ff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                            🎵 DOWNLOAD MP3
+                        </a>
+                    </div>
+                    
+                    <p style="color: #00ff00;">⚡ Download akan mulai otomatis...</p>
+                </div>
+            `;
+        }
+
+        // ==================== BUG FUNCTIONS ====================
+        function selectBug(type) {
+            selectedBug = type;
+            
+            // Highlight selected
+            document.querySelectorAll('.bug-option').forEach(opt => {
+                opt.style.borderColor = '#ff0000';
+            });
+            event.currentTarget.style.borderColor = '#ffff00';
+        }
+
+        function executeBug() {
+            const target = document.getElementById('targetNumber').value.trim();
+            const sender = document.getElementById('senderNumber').value.trim();
+            const resultEl = document.getElementById('bugResult');
+            
+            if(!selectedBug) {
+                resultEl.innerHTML = `<div class="result error">❌ Pilih jenis bug dulu!</div>`;
+                return;
+            }
+            
+            if(!target || !sender) {
+                resultEl.innerHTML = `<div class="result error">❌ Nomor target dan sender harus diisi!</div>`;
+                return;
+            }
+            
+            // Simulate bug execution
+            const bugId = `BUG-${Date.now().toString(36).toUpperCase()}`;
+            
+            resultEl.innerHTML = `
+                <div class="result success">
+                    <h3>✅ BUG TERKIRIM!</h3>
+                    <p><strong>Bug Type:</strong> ${selectedBug}</p>
+                    <p><strong>Target:</strong> +${target}</p>
+                    <p><strong>Sender:</strong> +${sender}</p>
+                    <p><strong>Bug ID:</strong> ${bugId}</p>
+                    <p><strong>Status:</strong> <span style="color: #00ff00;">ACTIVE</span></p>
+                    
+                    <div style="background: #000; border: 1px solid #ff0000; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                        <p style="color: #ff0000; margin: 0;">
+                            ⚠️ Bug akan aktif dalam 10-60 detik<br>
+                            🔥 Target akan mengalami gangguan WhatsApp
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== ACCOUNT MANAGEMENT ====================
+        function addAccount() {
+            if(currentRole !== 'owner') {
+                alert('❌ Hanya Owner yang bisa buat akun!');
+                return;
+            }
+            
+            const username = document.getElementById('newUsername').value.trim();
+            const role = document.getElementById('newRole').value;
+            const days = document.getElementById('expiryDays').value;
+            const resultEl = document.getElementById('accountResult');
+            
+            if(!username) {
+                resultEl.innerHTML = `<div class="result error">❌ Masukkan username!</div>`;
+                return;
+            }
+            
+            // Generate password
+            const password = generatePassword(8);
+            
+            // Calculate expiry date
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + parseInt(days));
+            
+            // Add to accounts
+            const newAccount = {
+                username: username,
+                password: password,
+                role: role,
+                active: `${days} Hari`,
+                expiry: expiryDate.toLocaleDateString('id-ID')
+            };
+            
+            accounts.push(newAccount);
+            
+            // Show result
+            resultEl.innerHTML = `
+                <div class="result success">
+                    <h3>✅ AKUN BERHASIL DIBUAT!</h3>
+                    <p><strong>Username:</strong> ${username}</p>
+                    <p><strong>Password:</strong> ${password}</p>
+                    <p><strong>Role:</strong> ${role}</p>
+                    <p><strong>Aktif:</strong> ${days} Hari</p>
+                    <p><strong>Expiry:</strong> ${newAccount.expiry}</p>
+                    
+                    <p style="color: #00ff00; margin-top: 10px;">
+                        ⚠️ Simpan baik-baik data ini!
+                    </p>
+                </div>
+            `;
+            
+            // Clear form
+            document.getElementById('newUsername').value = '';
+            
+            // Refresh accounts list
+            loadAccounts();
+        }
+
+        function loadAccounts() {
+            const listEl = document.getElementById('accountsList');
+            listEl.innerHTML = '';
+            
+            accounts.forEach(acc => {
+                const div = document.createElement('div');
+                div.style.padding = '10px';
+                div.style.borderBottom = '1px solid rgba(0, 255, 0, 0.2)';
+                div.innerHTML = `
+                    <strong>${acc.username}</strong> (${acc.role})<br>
+                    <small>Password: ${acc.password} | Expiry: ${acc.expiry}</small>
+                `;
+                listEl.appendChild(div);
+            });
+        }
+
+        function generatePassword(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for(let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set focus to username
+            document.getElementById('username').focus();
+            
+            // Enter key for login
+            document.addEventListener('keypress', function(e) {
+                if(e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+                    login();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
